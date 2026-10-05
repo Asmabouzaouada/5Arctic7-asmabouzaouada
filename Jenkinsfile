@@ -1,35 +1,63 @@
 pipeline {
-
     agent any
 
-    stages {
+    environment {
+        PROJECT_KEY = 'Mon-projet'
+        SPRING_DATASOURCE_PASSWORD = credentials('mysql-root-password')
+    }
 
-        stage('Clone') {
+    stages {
+        stage('GIT') {
             steps {
-                git 'https://github.com/Alaa-Rami/DevOps-AppGestionDesProjets.git'
+                checkout scm
             }
         }
 
-        stage('Build Backend') {
+        stage('Build') {
             steps {
                 dir('backend') {
-                    sh './mvnw clean package -DskipTests'
+                    sh 'mvn clean compile'
                 }
             }
         }
 
-        stage('Build Docker Images') {
+        stage('Tests') {
             steps {
-                sh 'docker compose build'
+                dir('backend') {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'backend/target/surefire-reports/*.xml'
+                }
             }
         }
 
-        stage('Deploy') {
+        stage('SonarQube') {
             steps {
-                sh 'docker compose up -d'
+                dir('backend') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar -Dsonar.projectKey=$PROJECT_KEY -Dsonar.token=$SONAR_AUTH_TOKEN'
+                    }
+                }
             }
         }
 
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                dir('backend') {
+                    sh 'mvn package -DskipTests'
+                }
+            }
+        }
     }
-
 }
