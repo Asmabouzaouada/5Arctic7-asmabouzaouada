@@ -38,7 +38,7 @@ pipeline {
             steps {
                 dir('backend') {
                     withSonarQubeEnv('SonarQube') {
-                        sh 'mvn sonar:sonar -Dsonar.projectKey=$PROJECT_KEY -Dsonar.token=$SONAR_AUTH_TOKEN'
+                        sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=$PROJECT_KEY -Dsonar.token=$SONAR_AUTH_TOKEN'
                     }
                 }
             }
