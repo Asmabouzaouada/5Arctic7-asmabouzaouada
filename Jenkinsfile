@@ -87,7 +87,7 @@ pipeline {
                         --dry-run=client -o yaml | kubectl apply -f -
  
                       kubectl apply -f k8s/mysql.yaml
-                      kubectl -n devops rollout status deploy/mysql --timeout=180s
+                      kubectl -n devops rollout status deploy/mysql --timeout=420s
  
                       sed "s|__IMAGE__|$BACKEND_IMAGE:$IMAGE_TAG|g"  k8s/backend.yaml  | kubectl apply -f -
                       sed "s|__IMAGE__|$FRONTEND_IMAGE:$IMAGE_TAG|g" k8s/frontend.yaml | kubectl apply -f -
