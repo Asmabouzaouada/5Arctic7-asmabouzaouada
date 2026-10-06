@@ -5,7 +5,7 @@ pipeline {
         // ====== CHANGEZ ======
         PROJECT_KEY    = 'Mon-projet'
         DOCKERHUB_USER = 'asmabouzaouada'
-        // format imposé : asmabouzaouada_5arctic7_monprojet (minuscules pour Docker Hub)
+        // format imposé : asmabouzaouada_5arctic7_monProjet (minuscules pour Docker Hub)
         IMAGE_BASE     = 'asmabouzaouada-5arctic7-monprojet'
         // =====================
         BACKEND_IMAGE  = "${DOCKERHUB_USER}/${IMAGE_BASE}-backend"
@@ -92,7 +92,7 @@ pipeline {
                       sed "s|__IMAGE__|$BACKEND_IMAGE:$IMAGE_TAG|g"  k8s/backend.yaml  | kubectl apply -f -
                       sed "s|__IMAGE__|$FRONTEND_IMAGE:$IMAGE_TAG|g" k8s/frontend.yaml | kubectl apply -f -
  
-                      kubectl -n devops rollout status deploy/backend  --timeout=300s
+                      kubectl -n devops rollout status deploy/backend --timeout=600s || { kubectl -n devops get pods; kubectl -n devops describe pod -l app=backend | tail -30; kubectl -n devops logs deploy/backend --tail=50; exit 1; }
                       kubectl -n devops rollout status deploy/frontend --timeout=180s
                       kubectl -n devops get pods,svc
                     '''
@@ -108,3 +108,17 @@ pipeline {
     }
 }
  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
