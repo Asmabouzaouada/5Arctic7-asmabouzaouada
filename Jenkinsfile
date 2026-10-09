@@ -85,9 +85,9 @@ pipeline {
             }
         }
 
-                }
-            }
-        }
+                
+            
+        
  
         stage('Deploy Kubernetes') {
             steps {
