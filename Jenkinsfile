@@ -66,10 +66,10 @@ pipeline {
                                                   usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
                     sh '''
                       echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin
-                      docker push $BACKEND_IMAGE:$IMAGE_TAG
-                      docker push $BACKEND_IMAGE:latest
-                      docker push $FRONTEND_IMAGE:$IMAGE_TAG
-                      docker push $FRONTEND_IMAGE:latest
+                      docker push $BACKEND_IMAGE:$IMAGE_TAG || docker push $BACKEND_IMAGE:$IMAGE_TAG || docker push $BACKEND_IMAGE:$IMAGE_TAG
+                      docker push $BACKEND_IMAGE:latest || docker push $BACKEND_IMAGE:latest || docker push $BACKEND_IMAGE:latest
+                      docker push $FRONTEND_IMAGE:$IMAGE_TAG || docker push $FRONTEND_IMAGE:$IMAGE_TAG || docker push $FRONTEND_IMAGE:$IMAGE_TAG
+                      docker push $FRONTEND_IMAGE:latest || docker push $FRONTEND_IMAGE:latest || docker push $FRONTEND_IMAGE:latest
                       docker logout
                     '''
                 }
